@@ -156,7 +156,12 @@ export const NoteDetail = React.createClass({
   },
 
   render: function() {
-    const { filter, fontSize, previewingMarkdown } = this.props;
+    const {
+      filter,
+      fontSize,
+      markdownIsEnabled,
+      previewingMarkdown,
+    } = this.props;
 
     const content = get(this.props, 'note.data.content', '');
     const divStyle = { fontSize: `${fontSize}px` };
@@ -179,6 +184,7 @@ export const NoteDetail = React.createClass({
           >
             <MonacoEditor
               content={content}
+              markdownIsEnabled={markdownIsEnabled}
               onChangeContent={this.queueNoteSave}
               storeFocusEditor={this.storeFocusContentEditor}
               storeHasFocus={this.storeEditorHasFocus}

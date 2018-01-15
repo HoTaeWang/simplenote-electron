@@ -2,6 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import MonacoEditor from 'react-monaco-editor';
 
+const monospace = 'Menlo, Monaco, "Courier New", monospace';
+const variableWidth =
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif';
+
 export class Editor extends React.Component {
   state = {
     width: 800,
@@ -20,9 +24,13 @@ export class Editor extends React.Component {
     window.removeEventListener('resize', this.resize, false);
   }
 
-  componentDidUpdate({ theme }) {
+  componentDidUpdate({ markdownIsEnabled, theme }) {
     if (theme !== this.props.theme) {
       this.setTheme();
+    }
+
+    if (markdownIsEnabled !== this.props.markdownIsEnabled) {
+      this.setFont();
     }
   }
 
@@ -37,8 +45,10 @@ export class Editor extends React.Component {
       return;
     }
 
+    // throttle to every four frames
+    // this is hand-tuned so feel free to make better
     const now = performance.now();
-    if (this.lastResize && now - this.lastResize < 1000 / 60) {
+    if (this.lastResize && now - this.lastResize < 4 * 1000 / 60) {
       return;
     }
 
@@ -51,6 +61,17 @@ export class Editor extends React.Component {
       },
       () => this.editor && this.editor.layout()
     );
+  };
+
+  setFont = () => {
+    if (!this.editor) {
+      return;
+    }
+
+    this.editor.updateOptions({
+      fontFamily: this.props.markdownIsEnabled ? monospace : variableWidth,
+      fontSize: this.props.markdownIsEnabled ? 12 : 14,
+    });
   };
 
   setTheme = () => {
@@ -80,6 +101,7 @@ export class Editor extends React.Component {
     this.monaco = monaco;
 
     this.setTheme();
+    this.setFont();
 
     editor.focus();
   };
@@ -100,6 +122,8 @@ export class Editor extends React.Component {
           value={content}
           options={{
             lineNumbers: false,
+            fontFamily: markdownIsEnabled ? monospace : variableWidth,
+            fontSize: markdownIsEnabled ? 12 : 14,
             minimap: { enabled: false },
             renderLineHighlight: 'none',
             selectionHighlight: false,
@@ -112,7 +136,6 @@ export class Editor extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  markdownIsEnabled: state.settings.markdownEnabled,
   theme: state.settings.theme,
 });
 

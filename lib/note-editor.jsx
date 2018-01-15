@@ -248,6 +248,7 @@ export const NoteEditor = React.createClass({
               storeFocusEditor={this.storeFocusEditor}
               storeHasFocus={this.storeEditorHasFocus}
               filter={this.props.filter}
+              markdownIsEnabled={markdownEnabled}
               note={revision}
               previewingMarkdown={markdownEnabled && editorMode === 'markdown'}
               onChangeContent={this.props.onUpdateContent}
