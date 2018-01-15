@@ -1,7 +1,9 @@
 const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const config = require('./get-config');
+const path = require('path');
 const spawnSync = require('child_process').spawnSync;
 
 module.exports = {
@@ -14,21 +16,21 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /lib\/.+\.jsx?$/,
-        exclude: /node_modules|lib\/simperium/,
-        enforce: 'pre',
-        use: [
-          {
-            loader: 'eslint-loader',
-            options: {
-              cache: true,
-              configFile: '.eslintrc',
-              quiet: true,
-            },
-          },
-        ],
-      },
+      // {
+      //   test: /lib\/.+\.jsx?$/,
+      //   exclude: /node_modules|lib\/simperium/,
+      //   enforce: 'pre',
+      //   use: [
+      //     {
+      //       loader: 'eslint-loader',
+      //       options: {
+      //         cache: true,
+      //         configFile: '.eslintrc',
+      //         quiet: true,
+      //       },
+      //     },
+      //   ],
+      // },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
@@ -77,5 +79,17 @@ module.exports = {
       ),
       config: JSON.stringify(config()),
     }),
+    new CopyWebpackPlugin([
+      {
+        from: path.join(
+          __dirname,
+          'node_modules',
+          'monaco-editor',
+          'min',
+          'vs'
+        ),
+        to: 'vs',
+      },
+    ]),
   ],
 };

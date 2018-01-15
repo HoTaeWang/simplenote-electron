@@ -6,7 +6,7 @@ import xssFilter from 'showdown-xss-filter';
 import { get, debounce, invoke, noop } from 'lodash';
 import analytics from './analytics';
 import { viewExternalUrl } from './utils/url-utils';
-import NoteContentEditor from './note-content-editor';
+import MonacoEditor from './monaco-editor';
 
 const saveDelay = 2000;
 
@@ -177,13 +177,11 @@ export const NoteDetail = React.createClass({
             className="note-detail-textarea theme-color-bg theme-color-fg"
             style={divStyle}
           >
-            <NoteContentEditor
-              ref={this.saveEditorRef}
+            <MonacoEditor
+              content={content}
+              onChangeContent={this.queueNoteSave}
               storeFocusEditor={this.storeFocusContentEditor}
               storeHasFocus={this.storeEditorHasFocus}
-              content={content}
-              filter={filter}
-              onChangeContent={this.queueNoteSave}
             />
           </div>
         )}
